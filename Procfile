@@ -1,1 +1,1 @@
-python inli_bot.py
+worker: python inli_bot.py
