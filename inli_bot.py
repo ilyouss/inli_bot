@@ -185,13 +185,8 @@ def fetch_action_logement() -> list[dict]:
 
     annonces = []
 
-    # Gestion flexible de la structure de réponse
-    offers = (
-        data.get("content")
-        or data.get("offers")
-        or data.get("items")
-        or (data if isinstance(data, list) else [])
-    )
+    # La réponse contient la liste des logements dans le champ "data"
+    offers = data.get("data") or data.get("content") or data.get("offers") or (data if isinstance(data, list) else [])
 
     for offer in offers:
         guid = str(offer.get("guid") or offer.get("id") or offer.get("offerId") or "")
@@ -200,13 +195,23 @@ def fetch_action_logement() -> list[dict]:
 
         annonce_id = "al_" + guid
 
-        title  = offer.get("title") or offer.get("label") or "Logement Action Logement"
-        rent   = offer.get("rent") or offer.get("price") or offer.get("maxRent") or ""
-        price  = f"{rent} €/mois" if rent else "Prix non précisé"
+        title   = offer.get("title") or offer.get("label") or "Logement Action Logement"
+        rent    = offer.get("totalRentAmountBaseBound") or offer.get("rent") or offer.get("price") or ""
+        price   = f"{rent} €/mois" if rent else "Prix non précisé"
 
         city    = (offer.get("municipality") or {}).get("name") or offer.get("city") or ""
-        surface = offer.get("surface") or offer.get("area") or ""
+        surface = (offer.get("lodging") or {}).get("area") or offer.get("surface") or ""
         typo    = offer.get("typologyCode") or offer.get("typology") or ""
+
+        raw_date = offer.get("startDateOfPublication") or ""
+        if raw_date:
+            try:
+                from datetime import datetime
+                date_pub = datetime.fromisoformat(raw_date[:10]).strftime("%d/%m/%Y")
+            except Exception:
+                date_pub = raw_date[:10]
+        else:
+            date_pub = ""
 
         details = " | ".join(filter(None, [typo, f"{surface} m²" if surface else "", city]))
 
@@ -215,6 +220,7 @@ def fetch_action_logement() -> list[dict]:
         annonces.append({
             "id": annonce_id, "title": title,
             "url": offer_url,  "price": price, "details": details,
+            "date_pub": date_pub,
         })
 
     print(f"[{now()}] 🔍 Action Logement — {len(annonces)} annonce(s) trouvée(s)")
@@ -237,6 +243,8 @@ def check_action_logement():
             msg = f"🏢 <b>Nouvelle offre Action Logement !</b>\n\n📌 <b>{a['title']}</b>\n💶 {a['price']}\n"
             if a["details"]:
                 msg += f"📐 {a['details']}\n"
+            if a.get("date_pub"):
+                msg += f"📅 Publié le {a['date_pub']}\n"
             msg += f"\n🔗 <a href='{a['url']}'>Voir l'annonce</a>"
             send_telegram(msg)
             seen.add(a["id"])
