@@ -22,7 +22,7 @@ TELEGRAM_CHAT_ID = os.environ["TELEGRAM_CHAT_ID"]       # Ton Chat ID (voir ci-d
 #   Paris           : https://www.inli.fr/locations/offres/paris_d:75
 #   Hauts-de-Seine  : https://www.inli.fr/locations/offres/hauts-de-seine_d:92
 #   Île-de-France   : https://www.inli.fr/locations/offres/ile-de-france_r:11
-INLI_URL = "https://www.inli.fr/locations/offres/val-doise-departement_d:95?price_min=0&price_max=1100&area_min=0&area_max=250&bedroom_min=2&bedroom_max=5"
+INLI_URL = "https://www.inli.fr/locations/offres/val-doise-departement_d:95?price_min=0&price_max=1200&area_min=0&area_max=250&bedroom_min=2&bedroom_max=5"
 
 # Fichier de sauvegarde des annonces déjà vues
 DATA_FILE = "inli_seen.json"
