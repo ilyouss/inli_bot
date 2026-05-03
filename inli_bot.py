@@ -14,7 +14,7 @@ from bs4 import BeautifulSoup
 #  ⚙️  CONFIGURATION
 # ============================================================
 
-TELEGRAM_TOKEN   = os.environ["TELEGRAM_TOKEN"]
+TELEGRAM_TOKEN   = os.environ["TELEGRAM_TKN"]
 TELEGRAM_CHAT_ID = os.environ["TELEGRAM_CHAT_ID"]
 
 # --- inli.fr ---
